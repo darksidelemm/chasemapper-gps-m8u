@@ -953,7 +953,7 @@ class UBloxGPS(object):
         'datetime': datetime.datetime.utcnow(),       # Fix time as a datetime object.
         'dynamic_model': -1,      # Current dynamic model in use.
         'imu_alignment_running': -1,
-        'imu_alignment_status': "",
+        'imu_alignment_status': "Unknown",
         'imu_corrections': []
     }
     # Lock files for writing and reading to the internal state dictionary.
@@ -1280,6 +1280,7 @@ def send_car_position(state, udp_port=55672):
         'altitude': state['altitude'],
         'speed': state['ground_speed'],
         'heading_status': state['imu_alignment_status'],
+        'numSV': state['numSV'],
         'valid': True
     }
 

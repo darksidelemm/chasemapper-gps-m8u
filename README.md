@@ -3,6 +3,8 @@ Hey look! Yet another partial implementation of the uBlox binary protocol.
 
 The uBlox NEO-M8U is a new (2021) GPS from uBlox which incorporates an accelerometer and gyroscope for what uBlox calls 'Untethered Dead Reckoning'. The short version is that we end up with a GPS that can fuse multi-GNSS data and the IMU sensor data, for much better positional accuracy. More importantly for [Chasemapper](https://github.com/projecthorus/chasemapper) & Amateur Radio Direction-Finding (ARDF) use, the NEO-M8U can provide an accurate car heading, even when the car is moving slowly. This is extremely useful for fusion and display of incoming bearing data.
 
+I'm using a NEO-M8U on an Sparkfun module, available here: https://www.sparkfun.com/products/16329  (Also available from other resellers, such as Core Electronics here in Australia). I've mounted mine into an aluminium enclosure, mounted securely into my car.
+
 This repository is my attempt at a 'driver' for the uBlox NEO-M8U, to get the position and heading data into a format suitable for use with Chasemapper. It'll talk to a serial-connected (USB or otherwise) uBlox NEO-M8U, configure it, and emit UDP messages in a format Chasemapper can ingest.
 
 I may eventually merge this into Chasemapper itself.
@@ -45,7 +47,9 @@ su - pi -c "screen -dm -S ubloxm8u python3 /home/pi/chasemapper-gps-m8u/ubloxm8u
 TODO: Systemd service.
 
 ## IMU Alignment
-The uBlox NEO-M8U has an internal IMU (Accelerometer & Gyro), and will automatically perform an alignment when the GPS is started. You need to perform a few sharp left-right turns for it to figure itself out. Alignment status is emitted in the UDP message and displayed on Chasemapper's GUI (if headiing display is enabled).
+The uBlox NEO-M8U has an internal IMU (Accelerometer & Gyro), and will automatically perform an alignment when the GPS is started. You need to perform a few sharp left-right turns for it to figure itself out. Alignment status is emitted in the UDP message, and shown in the ChaseMapper Chase-Car settings pane.
+
+It's very important that the GPS receiver is securely mounted to the car somehow. In my case I mounted mine in an aluminium box which was itself securely mounted to my cargo barrier.
 
 ### Chasemapper Output Format
 The following JSON object is emitted by UDP broadcast on port 55672 by default (configurable on the command-line)
