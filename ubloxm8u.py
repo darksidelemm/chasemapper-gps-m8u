@@ -1186,7 +1186,7 @@ class UBloxGPS(object):
                 self.write_state('longitude', msg.Longitude*1.0e-7)
                 self.write_state('altitude', msg.hMSL*1.0e-3)
                 self.write_state('heading', msg.headVeh*1.0e-5)
-                self.write_state('ground_speed', msg.gSpeed*0.036)
+                self.write_state('ground_speed', msg.gSpeed*0.0036)
                 self.write_state('ascent_rate', -1.0*msg.velD/100.0)
                 (time_isotime, time_datetime) = self.get_pvt_time(msg)
                 self.write_state('timestamp', time_isotime)
