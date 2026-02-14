@@ -1,0 +1,15 @@
+[Unit]
+Description=ubloxm8u
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+ExecStart=python /home/pi/chasemapper-gps-m8u/ubloxm8u.py /dev/ublox
+Restart=always
+RestartSec=120
+WorkingDirectory=/home/pi/chasemapper-gps-m8u
+User=pi
+SyslogIdentifier=ubloxm8u
+
+[Install]
+WantedBy=multi-user.target
