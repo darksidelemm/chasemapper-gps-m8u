@@ -950,7 +950,7 @@ class UBloxGPS(object):
         'iTOW':         0,      # GPS Seconds in week.
         'leapS':        18,      # GPS Leap Seconds (Difference between GPS time and UTC time)
         'timestamp':    " ",    # ISO-8601 Compliant Date-code (generate by Python's datetime.isoformat() function)
-        'datetime': datetime.datetime.utcnow(),       # Fix time as a datetime object.
+        'datetime': datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None),       # Fix time as a datetime object.
         'dynamic_model': -1,      # Current dynamic model in use.
         'imu_alignment_running': -1,
         'imu_alignment_status': "Unknown",
@@ -1155,10 +1155,12 @@ class UBloxGPS(object):
         while self.rx_running:
             try:
                 msg = self.gps.receive_message()
+                if msg is None:
+                    raise EOFError("No data received from GPS")
                 msg_name = msg.name()
                 #print(msg_name)
-            except Exception as e:
-                traceback.print_exc(e)
+            except Exception:
+                traceback.print_exc()
                 self.debug_message("WARNING: GPS Failure. Attempting to reconnect.")
                 self.write_state('numSV',0)
                 # Attempt to re-open GPS.
@@ -1172,11 +1174,12 @@ class UBloxGPS(object):
                     self.gps = UBlox(self.port, self.baudrate, self.timeout)
                     self.setup_ublox()
                     self.debug_message("WARNING: GPS Re-connected.")
-                except:
-                    continue
+                except Exception:
+                    traceback.print_exc()
+                continue
 
             # If we have received a message we care about, unpack it and update our state dict.
-            if msg.name() == "NAV_PVT":
+            if msg_name == "NAV_PVT":
                 # Everything in one!
                 msg.unpack()
                 self.write_state('iTOW', msg.iTOW*1.0e-3)
@@ -1216,7 +1219,7 @@ class UBloxGPS(object):
                     self.gps.send_message(CLASS_ESF, MSG_ESF_ALG,b'\x00')
 
 
-            elif msg.name() == "ESF_ALG":
+            elif msg_name == "ESF_ALG":
                 msg.unpack()
 
                 _yaw = msg.yaw*1e-2
@@ -1352,5 +1355,4 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         gps.close()
-
 
